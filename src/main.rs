@@ -1,5 +1,6 @@
 use std::io::stdin;
 
+#[derive(Debug)]
 struct Visitor {
     name: String,
     greeting: String,
@@ -35,7 +36,7 @@ fn what_is_your_name() -> String {
 
 fn main() {
 
-    let visitor_list = [
+    let visitor_list = vec! [
         Visitor::new("bert", "Hello Bert! Enjoy your treehouse."), 
         Visitor::new("steve", "Hi Steve. Get your own damn milk."), 
         Visitor::new("fred", "Who let this guy in my treehouse?!"), 
@@ -43,7 +44,7 @@ fn main() {
     ];
 
     println!("Hello, what's your name?");
-    
+
     let name = what_is_your_name();
    
     let known_visitor = visitor_list
