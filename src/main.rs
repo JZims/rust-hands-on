@@ -1,25 +1,48 @@
 use std::io::stdin;
 
 #[derive(Debug)]
+enum VisitorAction {
+    Accept, 
+    AcceptWithNote {note: String},
+    Refuse,
+    Probation
+}
+
+#[derive(Debug)]
 struct Visitor {
     name: String,
-    greeting: String,
+    action: VisitorAction,
+    age: i8
 }
 
 impl Visitor {
-    fn new (name: &str, greeting: &str) -> Self {
+    fn new (name: &str, action: VisitorAction, age: i8) -> Self {
         Self {
             name: name.to_lowercase(),
-            greeting: greeting.to_string(),
+            action,
+            age,
         }
      }
 
-     fn greet_visitor(&self) {
-            println!("{}", self.greeting);
-        }
-    
-}
 
+     fn greet_visitor(&self) {
+
+            match &self.action {
+            
+            VisitorAction::Accept => println!("Welcome to the Treehouse. {}", self.name),
+            VisitorAction::AcceptWithNote { note } => {
+                println!("Welcome to the Treehouse. {}", self.name);
+                println!("{}", note);
+                if self.age < 21 {
+                    println!("Do NOT serve alcohol to {}!", self.name);
+                }
+            },
+            VisitorAction::Probation => println!("{} is now a probationary member!", self.name),
+            VisitorAction::Refuse => println!("Do not allow {} in!", self.name),
+             }
+    
+        }
+    }
 
 
 fn what_is_your_name() -> String {
@@ -36,14 +59,17 @@ fn what_is_your_name() -> String {
 
 fn main() {
 
-    let visitor_list = vec! [
-        Visitor::new("bert", "Hello Bert! Enjoy your treehouse."), 
-        Visitor::new("steve", "Hi Steve. Get your own damn milk."), 
-        Visitor::new("fred", "Who let this guy in my treehouse?!"), 
+    let mut visitor_list = vec! [
+        Visitor::new("Bert", VisitorAction::Accept, 45), 
+        Visitor::new("Steve",VisitorAction::AcceptWithNote{
+          note: String::from("Hi Steve. Get your own damn milk.")
+        }, 36 ) , 
+        Visitor::new("Fred", VisitorAction::Refuse, 30), 
     
     ];
+ loop {
 
-    println!("Hello, what's your name?");
+    println!("Hello, what's your name? (Leave empty and press ENTER to quit)");
 
     let name = what_is_your_name();
    
@@ -53,7 +79,17 @@ fn main() {
 
    match known_visitor {
     Some(visitor) => visitor.greet_visitor(),
-    None => println!("You are not on the visitor list. Please leave.")
-   }
+    None => {
+        if name.is_empty() {
+            break;
+           
+         } else {
+            println!("{} is not on the visitor list. This name has been added.", name);
+            visitor_list.push(Visitor::new(&name, VisitorAction::Probation, 0));
+         }
     
+        }
+    }
+  }
+  println!("{:#?}", visitor_list);
 }
